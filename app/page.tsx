@@ -5,32 +5,35 @@ import { callGPTServer } from "./server";
 
 type ChatHistoryMessage = {
   role: string;
-  content: string;
+  content: string | null;
 };
 
 export default function Home() {
-  const [messages, setMessages] = useState<ChatHistoryMessage[]>([
-    {
-      role: "system",
-      content: "You are a helpful assistant.",
-    },
-    {
-      role: "user",
-      content: "I need some assistance.",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatHistoryMessage[]>([]);
 
   const [message, setMessage] = useState("");
 
   const callGPTClient = async () => {
     const result = await callGPTServer({ message });
-    console.log("result:", result);
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { role: "user", content: message },
+      { role: "system", content: result },
+    ]);
+
+    setMessage("");
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-4 bg-white rounded shadow-md mb-4">
         <h2 className="text-xl font-bold mb-2">Chat History</h2>
+
+        {messages.length === 0 && (
+          <div className="p-2 rounded bg-gray-200">No messages yet</div>
+        )}
+
         <div className="flex flex-col space-y-2">
           {/* Render chat messages */}
           {messages.map((msg, index) => (

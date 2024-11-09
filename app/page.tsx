@@ -3,7 +3,23 @@
 import { useState } from "react";
 import { callGPTServer } from "./server";
 
+type ChatHistoryMessage = {
+  role: string;
+  content: string;
+};
+
 export default function Home() {
+  const [messages, setMessages] = useState<ChatHistoryMessage[]>([
+    {
+      role: "system",
+      content: "You are a helpful assistant.",
+    },
+    {
+      role: "user",
+      content: "I need some assistance.",
+    },
+  ]);
+
   const [message, setMessage] = useState("");
 
   const callGPTClient = async () => {
@@ -16,13 +32,17 @@ export default function Home() {
       <div className="w-full max-w-md p-4 bg-white rounded shadow-md mb-4">
         <h2 className="text-xl font-bold mb-2">Chat History</h2>
         <div className="flex flex-col space-y-2">
-          {/* Example chat messages */}
-          <div className="p-2 bg-gray-200 rounded">
-            Hello, how can I help you?
-          </div>
-          <div className="p-2 bg-blue-200 rounded self-end">
-            I need some assistance.
-          </div>
+          {/* Render chat messages */}
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`p-2 rounded ${
+                msg.role === "system" ? "bg-gray-200" : "bg-blue-200 self-end"
+              }`}
+            >
+              {msg.content}
+            </div>
+          ))}
         </div>
       </div>
 

@@ -1,24 +1,18 @@
 "use server";
 
 import OpenAI from "openai";
+import { ChatHistoryMessage } from "./page";
 const openai = new OpenAI();
 
-type CallGPTProps = {
-  message: string;
-};
-
-const callGPTServer = async ({ message }: CallGPTProps) => {
-  // TODO: add support for multiple messages
-
+const callGPTServer = async ({
+  messages,
+}: {
+  messages: ChatHistoryMessage[];
+}) => {
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
-    messages: [
-      { role: "system", content: "You are a helpful assistant." },
-      {
-        role: "user",
-        content: message,
-      },
-    ],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    messages: messages as any,
   });
 
   const response = completion.choices[0].message.content;

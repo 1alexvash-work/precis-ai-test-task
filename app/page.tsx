@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { callGPTServer } from "./server";
 
-type ChatHistoryMessage = {
+export type ChatHistoryMessage = {
   role: string;
   content: string | null;
 };
@@ -14,7 +14,11 @@ export default function Home() {
   const [message, setMessage] = useState("");
 
   const callGPTClient = async () => {
-    const result = await callGPTServer({ message });
+    const updatedMessages = [...messages, { role: "user", content: message }];
+
+    const result = await callGPTServer({
+      messages: updatedMessages,
+    });
 
     setMessages((prevMessages) => [
       ...prevMessages,
